@@ -2,7 +2,7 @@
 
 - [x] Melakukan instalasi dan konfigurasi ESP-IDF menggunakan command line
 - [x] Membuat projek sederhana
-- [ ] Menjelaskan bagaimana alur mulai esp32
+- [x] Menjelaskan bagaimana alur mulai esp32
 
 ## Instalasi dan konfigurasi
 
@@ -57,4 +57,17 @@ Pada fase First tage (ROM) Bootloader,akan melakukan pengecekaan apa dia deep re
 Pada second stage bootloader akan membaca partition table untuk mengetahui di mana letak aplikasi. Jika ada fitur OTA, akan melakukan pengecekan partisi `otadata` untuk melihat apakah harus menjalankan OTA lama atau OTA baru.
 
 ### 3) Application setup
--
+Setelah mengetahui dimana letak kode aplikasi maka akan dilanjutkan dengan persiapan awal apliasi.
+Pada tahap persiapan aplikasi, akan melakukan 3 bagian yaitu:
+1. Inisiasi PORT dan environment runtime c
+2. Inisiasi sistem service dan FreeRTOS
+3. Menjalankan tugas utama dan memanggil fungsi app_main.
+
+#### PORT Initialization
+Pada bagian ini merupakan hal krusial dikarenakan akan menjalankan beberapa hal seperti, inisiasi CRT (C runtime environment), inisiasi internal memori, jika menggunakan memori eksternal maka akan dinyalakan, mengatur CPU clock dan lain-lain.
+
+#### System Initialization
+Pada bagian ini akan melakukan inisiasi dari alokasi memori, persiapan awal untuk stdin, stdout, stderr , inisiasi SPI flash dan lain-lain.
+
+#### Running the Main Task
+Seletah semua komponen di inisiasikan, tugas utama akan di buat dan penjadwalan FreeRTOS akan dimulai
