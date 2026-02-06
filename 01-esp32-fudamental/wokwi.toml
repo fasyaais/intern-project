@@ -1,0 +1,4 @@
+[wokwi]
+version = 1
+firmware = 'build/01-esp32-fudamental.bin'
+elf = 'build/01-esp32-fudamental.elf'
