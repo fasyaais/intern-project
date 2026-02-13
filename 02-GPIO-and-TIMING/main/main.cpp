@@ -131,8 +131,6 @@ void buttonISR(){
             gpio_set_level(LED_PIN, (ledMode == LED_ON));
             vTaskDelay(pdMS_TO_TICKS(200));
             printf("Button state : %d\n",ledMode);
-        }else {
-            printf("Refress semaphore \n");
         }
         vTaskDelay(50);
     }   
