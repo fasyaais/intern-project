@@ -28,6 +28,6 @@ https://medium.com/@vayilateja789/mastering-timers-in-microcontrollers-from-basi
 
 ![Alt text for the image](./src/Screenshot_20260213_145941.png "State Machine Diagram")
 
-Tombol akan dikonfigurasi sebagai interrupt dan akan mengirimkan sebuah semaphore. Pada task akan melakukan pengecekan pada semaphore apakah ada. Jika tidak ada maka akan melakukan blocking pada task tersebut yang membuat beban CPU.
+Tombol akan dikonfigurasi sebagai interrupt dan akan mengirimkan sebuah semaphore. Pada task akan melakukan pengecekan pada semaphore apakah ada. Jika tidak ada maka akan melakukan blocking pada task tersebut yang membuat beban CPU lebih ringan karena tidak ada pengecekan.
 
 https://medium.com/@joaquinlopezm/demystifying-freertos-a-practical-guide-to-semaphores-queues-and-mutexes-4113b9bb338c -> interrupt
