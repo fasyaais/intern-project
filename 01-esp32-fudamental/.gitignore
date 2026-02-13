@@ -24,6 +24,13 @@ build/
 *.out
 *.exe # For any host-side utilities compiled on Windows
 
+**/bin/*
+bin/
+*.o
+*.a
+*.out
+*.exe
+
 # ESP-IDF specific build outputs
 *.bin
 *.elf

@@ -35,10 +35,9 @@ extern "C" void app_main(void){
     snprintf(msg.data(),msg.size(),"%02x:%02x:%02x:%02x:%02x:%02x",mac[0],mac[1],mac[2],mac[3],mac[4],mac[5]);
     
     cJSON_AddStringToObject(root.get(),"chip_number",msg.data());
-    cJSON_AddNumberToObject(root.get(),"number_of_memory",info_.cores);
+    cJSON_AddNumberToObject(root.get(),"number_of_cores",info_.cores);
     cJSON_AddNumberToObject(root.get(),"free_heap_size",free_heap_size_);
     cJSON_AddNumberToObject(root.get(),"total_flash",static_cast<double>(flash_size_));
     etl::unique_ptr<char,JsonString_d> json_string(cJSON_Print(root.get()));
     printf("%s",json_string.get());
-
 }
