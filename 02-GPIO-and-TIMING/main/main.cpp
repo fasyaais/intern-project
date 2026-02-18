@@ -3,6 +3,7 @@
 // #include <cstdint>
 #include <driver/gptimer.h>
 #include <driver/gpio.h>
+#include "esp_log.h"
 
 #define LED_PIN GPIO_NUM_2
 #define BUTTON_PIN GPIO_NUM_4
@@ -22,6 +23,7 @@ typedef enum {
 } led_mode_t;
 
 static led_mode_t ledMode = LED_OFF; 
+static const char* TAG = "Task-2";
 
 extern "C" {
     void app_main();
@@ -36,6 +38,7 @@ static bool example_timer_on_alarm_cb(gptimer_handle_t timer, const gptimer_alar
 
 static void IRAM_ATTR buttonISRInterrupt(void *arg){
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    ledMode = (ledMode == LED_ON)?LED_ON:LED_OFF;
     xSemaphoreGiveFromISR(button_sem,&xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
@@ -43,25 +46,26 @@ static void IRAM_ATTR buttonISRInterrupt(void *arg){
 void app_main(void)
 {
     ESP_ERROR_CHECK(gpio_set_direction(LED_PIN,GPIO_MODE_OUTPUT));
-    // ESP_ERROR_CHECK(gpio_set_direction(BUTTON_PIN,GPIO_MODE_INPUT));
-    // ESP_ERROR_CHECK(gpio_set_pull_mode(BUTTON_PIN,GPIO_PULLUP_ONLY));
+    ESP_ERROR_CHECK(gpio_set_direction(BUTTON_PIN,GPIO_MODE_INPUT));
+    ESP_ERROR_CHECK(gpio_set_pull_mode(BUTTON_PIN,GPIO_PULLUP_ONLY));
     
-    // blinkHardwareTimer();
-    // debounceButton();
     // blinkPolling();
-    buttonISR();
+    // blinkHardwareTimer();
+    debounceButton();
+    // buttonISR();
 }
 
 void blinkPolling(){
+    
     TickType_t ledTick = xTaskGetTickCount();
-    uint8_t ledPeriod = 1000;
+    uint32_t ledPeriod = 1000;
     while (true)
     {
         if((xTaskGetTickCount() - ledTick) > (ledPeriod/2)){
             stateLED = !stateLED;
             gpio_set_level(LED_PIN, stateLED);
         }
-        vTaskDelay(100);
+        vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
 
@@ -94,17 +98,34 @@ void blinkHardwareTimer()
 }
 
 void debounceButton(){
-    TickType_t lastButtonTick = xTaskGetTickCount();
-    uint8_t lastButtonState = 0;
-    for(;;){
-        uint8_t buttonState = gpio_get_level(BUTTON_PIN);
-        if(((xTaskGetTickCount() - lastButtonTick) > pdMS_TO_TICKS(debounceDelay)) && (buttonState != lastButtonState)){
-            lastButtonTick = xTaskGetTickCount();
-            lastButtonState = buttonState;
-            gpio_set_level(LED_PIN, lastButtonState);
-            printf("last button state: %d\n",lastButtonState);   
+    uint8_t lastReading = gpio_get_level(BUTTON_PIN);
+    uint8_t stableState = lastReading;
+    TickType_t lastDebounceTime = 0;
+    const TickType_t debounceTicks = pdMS_TO_TICKS(debounceDelay);
+    for(;;)
+    {
+        uint8_t currentReading = gpio_get_level(BUTTON_PIN);
+
+        if (currentReading != lastReading)
+        {
+            lastDebounceTime = xTaskGetTickCount();
+            lastReading = currentReading;
         }
-        vTaskDelay(50);
+
+        if ((xTaskGetTickCount() - lastDebounceTime) > debounceTicks)
+        {
+            if (stableState != currentReading)
+            {
+                stableState = currentReading;
+                if (stableState == 0) 
+                {
+                    ESP_LOGI(TAG,"%d",ledMode);
+                    ledMode = (ledMode == LED_ON) ? LED_OFF : LED_ON;
+                    gpio_set_level(LED_PIN, (ledMode == LED_ON));
+                }
+            }
+        }
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 
@@ -129,7 +150,7 @@ void buttonISR(){
         if (xSemaphoreTake(button_sem, portMAX_DELAY) == pdTRUE) {
             ledMode = (ledMode == LED_ON) ? LED_OFF : LED_ON;
             gpio_set_level(LED_PIN, (ledMode == LED_ON));
-            vTaskDelay(pdMS_TO_TICKS(200));
+            // vTaskDelay(pdMS_TO_TICKS(200));
             printf("Button state : %d\n",ledMode);
         }
         vTaskDelay(50);
