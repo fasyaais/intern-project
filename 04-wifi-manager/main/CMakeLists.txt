@@ -12,6 +12,7 @@ set(include_dirs
     "config/nvs-config"
     "services/wifi-service"
     "services/http-service"
+    "models"
 )
 
 idf_component_register(
