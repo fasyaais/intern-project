@@ -6,6 +6,8 @@
 #include "esp_log.h"
 #include "memory"
 #include "app_context.h"
+#include "vector"
+#include "algorithm"
 
 class WiFiService
 {
@@ -15,13 +17,15 @@ private:
     // app_context_t _context;
     httpd_handle_t _server_handler;
     static uint8_t _attempt;
-
-    static void _eventHandler(void* arg, esp_event_base_t base, int32_t id, void* data);
+    
+    static void _eventHandlerAP(void* arg, esp_event_base_t base, int32_t id, void* data);
+    static void _eventHandlerSTA(void* arg, esp_event_base_t base, int32_t id, void* data);
     // void staHandler
 public:
-    WiFiService(/* args */);
+    WiFiService();
     esp_err_t apInit();
     esp_err_t staInit();
+    std::vector<wifi_ap_record_t> scanAP();
     void begin();
     
 };

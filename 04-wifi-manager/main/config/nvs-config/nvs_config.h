@@ -18,6 +18,8 @@ public:
     esp_err_t open();
     std::unique_ptr<char[]> read(const char* key);
     esp_err_t write(const char* key,const char* message);
+    esp_err_t erase(const char* key);
+
 };
 
 #endif

@@ -59,3 +59,10 @@ esp_err_t NVSConfig::write(const char* key,const char* message){
     }
     return nvs_commit(_handler);
 }
+
+esp_err_t NVSConfig::erase(const char* key){
+    ESP_LOGI(_TAG, "Deleting key from NVS");
+    esp_err_t err = nvs_erase_key(_handler,key);
+    if(err != ESP_OK) return err;
+    return nvs_commit(_handler);
+}

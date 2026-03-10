@@ -1,0 +1,6 @@
+#include "router_wrapper.h"
+
+esp_err_t routerWrapper(httpd_req_t* req){
+    auto* ctx = static_cast<RouteContext*>(req->user_ctx);
+    return (ctx->controller->*(ctx->handler))(req);
+}
