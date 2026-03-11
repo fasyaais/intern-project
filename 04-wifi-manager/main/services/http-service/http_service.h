@@ -19,6 +19,8 @@ private:
     static void _eventHandler(void* arg, esp_event_base_t base, int32_t id, void* data);
 public:
     HTTPService(NVSConfig& nvsConfig,APRouter& apRouter);
+    ~HTTPService();
+
     esp_err_t start();
     esp_err_t start(uint16_t port);
     esp_err_t stop();

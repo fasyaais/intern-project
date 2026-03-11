@@ -28,6 +28,6 @@ extern "C" {
 // }
 
 void app_main(){
-    SystemManager sm;
+    static SystemManager sm;
     sm.start();
 }

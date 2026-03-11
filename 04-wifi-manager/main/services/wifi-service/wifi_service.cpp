@@ -1,8 +1,13 @@
 #include "wifi_service.h"
 
 uint8_t WiFiService::_attempt = 0;
+EventGroupHandle_t WiFiService::_wifiEventGroup = nullptr;
 
-WiFiService::WiFiService(){}
+WiFiService::WiFiService(NVSConfig& nvsConfig):_nvsConfig(nvsConfig){}
+
+WiFiService::~WiFiService(){
+    ESP_LOGI(_TAG,"wifi service close");
+}
 
 void WiFiService::begin(){
     ESP_ERROR_CHECK(esp_netif_init());
@@ -14,18 +19,29 @@ void WiFiService::begin(){
 
 void WiFiService::_eventHandlerSTA(void* arg, esp_event_base_t base, int32_t id, void* data){
     auto ctx = reinterpret_cast<WiFiService*>(arg);
-    if(base == WIFI_EVENT && id == WIFI_EVENT_STA_DISCONNECTED){
-        if(ctx->_attempt<5){
+    if(base == WIFI_EVENT ){
+        if(id == WIFI_EVENT_STA_DISCONNECTED){
+            if(ctx->_attempt < 20){
+                esp_wifi_connect();
+                ctx->_attempt++;
+                ESP_LOGI(_TAG,"retry to connect to the AP");
+            }else{
+                ctx->_nvsConfig.erase("ssid");
+                ctx->_nvsConfig.erase("password");
+                ctx->_nvsConfig.erase("authmode");
+                esp_restart();
+            }
+        }else if ( id == WIFI_EVENT_STA_START){
+            ESP_LOGI(_TAG,"Wifi Start");
             esp_wifi_connect();
-            ctx->_attempt++;
-            ESP_LOGI(_TAG,"retry to connect to the AP");
-        }else{
-            esp_restart();
+        }else if(id == WIFI_EVENT_STA_CONNECTED){
+            ESP_LOGI(_TAG,"WiFi connected");
         }
     } else if(base == IP_EVENT && id == IP_EVENT_STA_GOT_IP){
         auto event = reinterpret_cast<ip_event_got_ip_t*>(data);
         ESP_LOGI(_TAG, "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
         ctx->_attempt = 0;
+        xEventGroupSetBits(_wifiEventGroup,WIFI_CONNECTED_BIT);
     }
 }
 
@@ -38,7 +54,6 @@ void WiFiService::_eventHandlerAP(void* arg, esp_event_base_t base, int32_t id, 
         auto event = reinterpret_cast<wifi_event_ap_stadisconnected_t*>(data);
         ESP_LOGI(_TAG, "station "MACSTR" leave, AID=%d, reason=%d",
                  MAC2STR(event->mac), event->aid, event->reason);
-
     }
 }
 
@@ -54,11 +69,12 @@ esp_err_t WiFiService::apInit(){
 esp_err_t WiFiService::staInit(){
     esp_netif_create_default_wifi_sta();
     esp_err_t err = ESP_OK;
+    _wifiEventGroup = xEventGroupCreate();
     err = esp_event_handler_instance_register(WIFI_EVENT,ESP_EVENT_ANY_ID,&_eventHandlerSTA,this,nullptr);
     if(err != ESP_OK){
         return err;
     }
-    err = esp_event_handler_instance_register(IP_EVENT,IP_EVENT_STA_GOT_IP,&WiFiService::_eventHandlerSTA,
+    err = esp_event_handler_instance_register(IP_EVENT,IP_EVENT_STA_GOT_IP,&_eventHandlerSTA,
                                                             this,nullptr);
     return err;
 }
@@ -73,5 +89,15 @@ std::vector<wifi_ap_record_t> WiFiService::scanAP(){
         return a.rssi > b.rssi;
     });
 
+    for (auto &i : records)
+    {
+        ESP_LOGI(_TAG,"ssid: %s,rssi: %d,authmode; %d",i.ssid,i.rssi,i.authmode);
+    }
+    
+
     return records;
+}
+
+void WiFiService::waitConnected(){
+    xEventGroupWaitBits(_wifiEventGroup,WIFI_CONNECTED_BIT,pdFALSE,pdTRUE,portMAX_DELAY);
 }

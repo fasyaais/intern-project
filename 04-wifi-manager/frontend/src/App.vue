@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import {  onMounted, ref } from 'vue'
 import networks from '@/networks.json'
 import {
   AlertDialog,
@@ -28,12 +28,12 @@ const isSubmited = ref(false)
 onMounted(async () => {
   const n = await fetch('http://192.168.4.1:8080/api/scan')
   data.value = await n.json()
-  data.value = networks
+  // data.value = networks
   // console.log(data.value.data)
 })
 
 const submit = async (ssid:string)=>{
-  await fetch("http://192.168.4.1:8080/api/network", {
+  await fetch("http://192.168.4.1:8080/api/connect", {
     method: "POST",
     // headers: {
     //   "content-type" : "application/json",
@@ -47,9 +47,9 @@ const submit = async (ssid:string)=>{
 </script>
 
 <template>
-  <div class="mx-auto w-lg">
+  <div class="mx-auto container md:w-lg p-4">
     <div v-if="!isSubmited">
-      <div>
+      <div class="mb-3">
         <h1 class="text-3xl font-bold">All WiFi</h1>
       </div>
       <ul class="flex flex-col gap-4 bg-white p-4 rounded-2xl h-128 overflow-y-auto">

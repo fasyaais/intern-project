@@ -11,14 +11,19 @@ class NVSConfig
 private:
     nvs_handle_t _handler;
     esp_err_t _err;
-    const char* _TAG = "nvs storage";
+    static constexpr const char* _TAG = "nvs storage";
 public:
     // NVSConfig();
     ~NVSConfig();
     esp_err_t open();
-    std::unique_ptr<char[]> read(const char* key);
+    void stop();
+
     esp_err_t write(const char* key,const char* message);
     esp_err_t erase(const char* key);
+
+    
+    std::unique_ptr<char[]> read(const char* key);
+    
 
 };
 

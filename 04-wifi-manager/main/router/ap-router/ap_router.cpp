@@ -2,8 +2,12 @@
 
 APRouter::APRouter(APController& controller):_controller(controller){}
 
+APRouter::~APRouter(){
+    ESP_LOGI(_TAG,"Router close");
+}
+
 void APRouter::registerRouter(httpd_handle_t server){
-    static RouteContext scanCtx {
+    static router_context_t scanCtx {
         &_controller,
         &APController::apiScanAP
     };
@@ -15,7 +19,7 @@ void APRouter::registerRouter(httpd_handle_t server){
     };
     httpd_register_uri_handler(server,&api_scan);
 
-    static RouteContext connectAPCtx {
+    static router_context_t connectAPCtx {
         &_controller,
         &APController::connectAP
     };
@@ -27,7 +31,7 @@ void APRouter::registerRouter(httpd_handle_t server){
     };
     httpd_register_uri_handler(server,&connect_ap_api);
 
-    static RouteContext indexHTML {
+    static router_context_t indexHTML {
         &_controller,
         &APController::indexHTML
     };
@@ -39,7 +43,7 @@ void APRouter::registerRouter(httpd_handle_t server){
     };
     httpd_register_uri_handler(server,&index_html_api);
 
-    static RouteContext indexCSSCtx {
+    static router_context_t indexCSSCtx {
         &_controller,
         &APController::indexCSS
     };
@@ -51,7 +55,7 @@ void APRouter::registerRouter(httpd_handle_t server){
     };
     httpd_register_uri_handler(server,&index_css_api);
 
-    static RouteContext appJsCtx {
+    static router_context_t appJsCtx {
         &_controller,
         &APController::appJS
     };

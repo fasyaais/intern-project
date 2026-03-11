@@ -1,9 +1,9 @@
 #pragma once
-#include "ap_controller.h"
+class APController;
 
 using APHandler = esp_err_t (APController::*)(httpd_req_t*);
 
-struct RouteContext
+struct router_context_t
 {
     APController* controller;
     APHandler handler;

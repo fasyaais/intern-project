@@ -1,9 +1,7 @@
 #include "nvs_config.h"
 
 NVSConfig::~NVSConfig(){
-    ESP_LOGI(_TAG,"Close nvs");
-    nvs_close(_handler);
-    return;
+    ESP_LOGI(_TAG,"nvs CLOSE");
 }
 
 esp_err_t NVSConfig::open(){
@@ -15,17 +13,16 @@ esp_err_t NVSConfig::open(){
     }
     return ESP_OK;
 }
-/**
- * @brief Membaca nilai dari nvs
- * @param key string
- * @return
- * - ESP_OK jika berhasil membaca data
- * - nullptr jika gagal membaca data
- */
+
+void NVSConfig::stop(){
+    ESP_LOGI(_TAG,"Close nvs");
+    nvs_close(_handler);
+}
+
 std::unique_ptr<char[]> NVSConfig::read(const char* key){
-    size_t required_size = 0;
     esp_err_t err;
-    ESP_LOGI("nvs storage", "Read string to nvs");
+    size_t required_size = 0;
+    ESP_LOGI("nvs storage", "Read value to nvs");
     err = nvs_get_str(_handler, key, nullptr, &required_size);
 
     if(err != ESP_OK){
@@ -38,7 +35,7 @@ std::unique_ptr<char[]> NVSConfig::read(const char* key){
         return nullptr;
     }
 
-    ESP_LOGI(_TAG, "Success read string");
+    ESP_LOGI(_TAG, "Success read to nvs");
     return message;
 }
 

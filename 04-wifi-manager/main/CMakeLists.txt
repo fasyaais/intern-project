@@ -8,6 +8,7 @@ set(sources
     
     "services/wifi-service/wifi_service.cpp"
     "services/http-service/http_service.cpp"
+    "services/http-client-service/http_client_service.cpp"
     
     "controllers/ap-controller/ap_controller.cpp"
 
@@ -27,6 +28,7 @@ set(include_dirs
 
     "services/wifi-service"
     "services/http-service"
+    "services/http-client-service"
 
     "models"
     
@@ -41,7 +43,7 @@ set(include_dirs
 idf_component_register(
     SRCS ${sources}
     INCLUDE_DIRS ${include_dirs}
-    REQUIRES nvs_flash esp_wifi esp_event esp_http_server
+    REQUIRES nvs_flash esp_wifi esp_event esp_http_server esp_http_client
     EMBED_FILES
         "../frontend/dist/index.html"
         "../frontend/dist/assets/index-CQOd6Co-.css"

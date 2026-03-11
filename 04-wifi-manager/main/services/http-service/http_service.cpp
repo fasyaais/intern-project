@@ -1,11 +1,12 @@
 #include "http_service.h"
 #include "ap_router.h"
 
-HTTPService::HTTPService(NVSConfig& nvsConfig,APRouter& apRouter):_nvsConfig(nvsConfig),_config(HTTPD_DEFAULT_CONFIG()),_server(nullptr),_apRouter(apRouter){};
+HTTPService::HTTPService(NVSConfig& nvsConfig,APRouter& apRouter):_nvsConfig(nvsConfig),_config(HTTPD_DEFAULT_CONFIG()),_server(nullptr),_apRouter(apRouter){}
 
-// HTTPService::~HTTPService(){
-//     stop();
-// }
+HTTPService::~HTTPService(){
+    ESP_LOGI(_TAG,"http service close");
+    // stop();
+}
 
 esp_err_t HTTPService::start(){
     _config.server_port = 8000;

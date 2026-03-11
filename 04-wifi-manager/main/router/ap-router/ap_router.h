@@ -10,8 +10,10 @@ class APRouter
 {
 private:
     APController& _controller; 
+    static constexpr const char* _TAG = "ap router";
 public:
     APRouter(APController& controller);
+    ~APRouter();
     void registerRouter(httpd_handle_t server);
 };
 
