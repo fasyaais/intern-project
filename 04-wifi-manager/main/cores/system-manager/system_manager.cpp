@@ -1,11 +1,17 @@
 #include "system_manager.h"
 
 SystemManager::SystemManager():
+        _ledDriver(GPIO_NUM_2),
+        _buttonDriver(GPIO_NUM_4),
         _wifiService(_nvsConfig),
+        _timeService(_nvsConfig),
+        _ledService(_ledDriver,_buttonDriver,_timeService,_clientService),
         _apController(_wifiService,_nvsConfig),
         _apRouter(_apController),
         _httpService(_nvsConfig,_apRouter)
-            {}
+    {
+        
+    }
 
 void SystemManager::start(){
     esp_err_t err = nvs_flash_init();
@@ -69,10 +75,35 @@ void SystemManager::start(){
         ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config) );
         ESP_ERROR_CHECK(esp_wifi_start() );
         _wifiService.waitConnected();
-        _clientService.begin("http://192.168.190.42:3000/");
-        const char *data = "{\"field1\":\"value1\"}";
-        _clientService.post(data);
-    }
-    
 
+        _timeService.fetchTime();
+
+        esp_timer_create_args_t nvs_update_timer_args = {};
+        nvs_update_timer_args.arg = (void*)&_timeService;
+        nvs_update_timer_args.callback = [](void *args){
+            auto* service = static_cast<TimeService*>(args);
+            for(;;) {
+                service->fetchTime();
+                vTaskDelay(pdMS_TO_TICKS(TIME_PERIOD)); // Update setiap periode tertentu
+            }
+        };
+
+        // esp_timer_handle_t nvs_update_timer;
+        // ESP_ERROR_CHECK(esp_timer_create(&nvs_update_timer_args, &_nvs_update_timer));
+        // ESP_ERROR_CHECK(esp_timer_start_periodic(_nvs_update_timer, TIME_PERIOD));
+
+        
+        _clientService.begin("http://"PATH":3000/");
+        const char *data = "{\"field1\":\"value1\"}";
+        // _clientService.post(data);
+        _clientService.get();
+
+        xTaskCreate(&_ledTask,"led task",4096,this,3,nullptr);        
+    }
+}
+
+void SystemManager::_ledTask(void* args){
+    auto* self = static_cast<SystemManager*>(args);
+    self->_ledService.init();
+    vTaskDelete(nullptr);
 }

@@ -6,7 +6,7 @@ namespace response{
     void sendJSON(httpd_req_t* req,cJSON* data){
         auto json = std::unique_ptr<cJSON,decltype(&cJSON_Delete)>(cJSON_CreateObject(),cJSON_Delete); 
         cJSON_AddItemToObject(json.get(),"data",data);
-        char* str = cJSON_PrintUnformatted(json.get());
+        char* str = cJSON_PrintUnformatted(data);
         httpd_resp_set_type(req,"application/json");
         httpd_resp_send(req,str,strlen(str));
         free(str);

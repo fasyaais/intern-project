@@ -28,6 +28,8 @@ extern "C" {
 // }
 
 void app_main(){
-    static SystemManager sm;
-    sm.start();
+    auto sm = std::make_unique<SystemManager>();
+    sm->start();
+    
+    ESP_LOGI("MEM", "Size of SystemManager: %d bytes", sizeof(sm));
 }

@@ -1,1 +1,79 @@
-{ "data": [ { "ssid": "Ravelware Technology", "rssi": -45 }, { "ssid": "HP-Print-3A-LaserJet M12", "rssi": -47 }, { "ssid": "RavelwareTechnologyL1_i12", "rssi": -54 }, { "ssid": "RavelwareTechnologyL3_i12", "rssi": -57 }, { "ssid": "na jaemin ", "rssi": -66 }, { "ssid": "BETOS-BLOKI12", "rssi": -70 }, { "ssid": "CFUBEKASI", "rssi": -74 }, { "ssid": "PHOENIK", "rssi": -76 }, { "ssid": "PT NEO 4G", "rssi": -77 }, { "ssid": "PT NEO 5G", "rssi": -77 }, { "ssid": "RavelwareTechnology", "rssi": -79 }, { "ssid": "RavelwareTechnologyL2_2.4G", "rssi": -81 }, { "ssid": "prima media sukses", "rssi": -85 }, { "ssid": "DIRECT-3C-EPSON-88E1FD", "rssi": -86 }, { "ssid": "Bullan lt2", "rssi": -88 }, { "ssid": "ハナラ", "rssi": -90 } ] }
+{
+    "data": [
+        {
+            "ssid": "Ravelware Technology",
+            "rssi": -33,
+            "authmode": 3
+        },
+        {
+            "ssid": "Dokto",
+            "rssi": -45,
+            "authmode": 3
+        },
+        {
+            "ssid": "OKE",
+            "rssi": -54,
+            "authmode": 3
+        },
+        {
+            "ssid": "RavelwareTechnologyL3_i12",
+            "rssi": -61,
+            "authmode": 3
+        },
+        {
+            "ssid": "RavelwareTechnologyL1_i12",
+            "rssi": -62,
+            "authmode": 3
+        },
+        {
+            "ssid": "BETOS-BLOKI12",
+            "rssi": -64,
+            "authmode": 3
+        },
+        {
+            "ssid": "PT ARATEK BERSAMA JALA",
+            "rssi": -65,
+            "authmode": 3
+        },
+        {
+            "ssid": "Tenda_247C90",
+            "rssi": -68,
+            "authmode": 4
+        },
+        {
+            "ssid": "WIFI-TAMU",
+            "rssi": -69,
+            "authmode": 0
+        },
+        {
+            "ssid": "BETOS-BLOKI12",
+            "rssi": -70,
+            "authmode": 3
+        },
+        {
+            "ssid": "PT. Pamelaria lt2",
+            "rssi": -78,
+            "authmode": 4
+        },
+        {
+            "ssid": "CSI link",
+            "rssi": -80,
+            "authmode": 3
+        },
+        {
+            "ssid": "PT NEO 5G",
+            "rssi": -83,
+            "authmode": 4
+        },
+        {
+            "ssid": "RavelwareTechnologyL1",
+            "rssi": -85,
+            "authmode": 4
+        },
+        {
+            "ssid": "Redmi 9A",
+            "rssi": -91,
+            "authmode": 3
+        }
+    ]
+}

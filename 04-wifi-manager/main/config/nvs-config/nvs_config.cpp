@@ -63,3 +63,12 @@ esp_err_t NVSConfig::erase(const char* key){
     if(err != ESP_OK) return err;
     return nvs_commit(_handler);
 }
+
+esp_err_t NVSConfig::writeNumber(const char* key, const int64_t value){
+    esp_err_t err = nvs_set_i64(_handler,key,value);
+    if (err != ESP_OK) {
+        ESP_LOGE("nvs storage", "Failed to write string");
+        return ESP_FAIL;
+    }
+    return nvs_commit(_handler);
+}

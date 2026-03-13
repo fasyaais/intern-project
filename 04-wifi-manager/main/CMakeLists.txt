@@ -5,10 +5,15 @@ set(sources
     "cores/system-manager/system_manager.cpp"
     
     "config/nvs-config/nvs_config.cpp"
+
+    "drivers/button-driver/button_driver.cpp"
+    "drivers/led-driver/led_driver.cpp"
     
     "services/wifi-service/wifi_service.cpp"
     "services/http-service/http_service.cpp"
     "services/http-client-service/http_client_service.cpp"
+    "services/time-service/time_service.cpp"
+    "services/led-service/led_service.cpp"
     
     "controllers/ap-controller/ap_controller.cpp"
 
@@ -26,9 +31,14 @@ set(include_dirs
 
     "config/nvs-config"
 
+    "drivers/button-driver"
+    "drivers/led-driver"
+
     "services/wifi-service"
     "services/http-service"
     "services/http-client-service"
+    "services/time-service"
+    "services/led-service"
 
     "models"
     
@@ -43,7 +53,16 @@ set(include_dirs
 idf_component_register(
     SRCS ${sources}
     INCLUDE_DIRS ${include_dirs}
-    REQUIRES nvs_flash esp_wifi esp_event esp_http_server esp_http_client
+    REQUIRES 
+        nvs_flash 
+        esp_wifi 
+        esp_event 
+        esp_http_server 
+        esp_http_client 
+        mbedtls 
+        esp_timer
+        driver
+
     EMBED_FILES
         "../frontend/dist/index.html"
         "../frontend/dist/assets/index-CQOd6Co-.css"

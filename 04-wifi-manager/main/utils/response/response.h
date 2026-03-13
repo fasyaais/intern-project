@@ -9,9 +9,8 @@
 
 namespace response {
 
-void sendJSON(httpd_req_t* req, cJSON* data);
-
-cJSON* readJSON(httpd_req_t* req);
+    void sendJSON(httpd_req_t* req, cJSON* data);
+    cJSON* readJSON(httpd_req_t* req);
 
 }
 
