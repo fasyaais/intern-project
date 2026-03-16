@@ -7,13 +7,13 @@ LedDriver::LedDriver(gpio_num_t pin):_pin(pin){
 }
 
 void LedDriver::turnON(){
-    gpio_set_level(_pin,true);
     _lastState = true;
+    gpio_set_level(_pin,true);
 }
 
 void LedDriver::turnOFF(){
-    gpio_set_level(_pin,false);
     _lastState = false;
+    gpio_set_level(_pin,false);
 }
 
 bool LedDriver::isON(){

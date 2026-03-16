@@ -9,12 +9,14 @@
 // #include "app_context.h"
 #include "router_context.h"
 
+#define REBOOT_SUCCESS_BIT BIT0
+
 extern const uint8_t index_html_start[] asm("_binary_index_html_start");
 extern const uint8_t index_html_end[] asm("_binary_index_html_end");
-extern const uint8_t index_css_start[] asm("_binary_index_CQOd6Co__css_start");
-extern const uint8_t index_css_end[] asm("_binary_index_CQOd6Co__css_end");
-extern const uint8_t index_js_start[] asm("_binary_index_19cTNh9z_js_start");
-extern const uint8_t index_js_end[] asm("_binary_index_19cTNh9z_js_end");
+extern const uint8_t index_css_start[] asm("_binary_index_Bfr4IOl2_css_start");
+extern const uint8_t index_css_end[] asm("_binary_index_Bfr4IOl2_css_end");
+extern const uint8_t index_js_start[] asm("_binary_index_v8LhRFuD_js_start");
+extern const uint8_t index_js_end[] asm("_binary_index_v8LhRFuD_js_end");
 
 class APController
 {
@@ -25,6 +27,8 @@ private:
     void _cors(httpd_req_t* req);
     static constexpr const char* _TAG = "ap contoller";
 
+    EventGroupHandle_t _eventGroup;
+
 public:
     APController(WiFiService& WiFiService,NVSConfig& nvsConfig);
     ~APController();
@@ -34,6 +38,8 @@ public:
     esp_err_t indexHTML(httpd_req_t* req);
     esp_err_t appJS(httpd_req_t* req);
     esp_err_t connectAP(httpd_req_t* req);
+
+    void waitReboot();
 
 };
 

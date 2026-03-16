@@ -34,8 +34,10 @@ private:
     HTTPService _httpService;
 
     esp_timer_handle_t _nvs_update_timer;
+    TaskHandle_t _blinkHandler;
 
     static void _ledTask(void* args);
+    static void _ledBlinkTask(void* args);
 public:
     SystemManager();
     void start();

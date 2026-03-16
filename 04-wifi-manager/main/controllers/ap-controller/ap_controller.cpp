@@ -1,6 +1,6 @@
 #include "ap_controller.h"
 
-APController::APController(WiFiService& wifiService,NVSConfig& nvsConfig):_wifiService(wifiService),_nvsConfig(nvsConfig){}
+APController::APController(WiFiService& wifiService,NVSConfig& nvsConfig):_wifiService(wifiService),_nvsConfig(nvsConfig),_eventGroup(xEventGroupCreate()){}
 
 APController::~APController(){
     ESP_LOGI(_TAG, "ap controller close");
@@ -67,7 +67,10 @@ esp_err_t APController::connectAP(httpd_req_t* req){
     }
     ESP_LOGI("http server","ssid: %s, pass: %s",ssid->valuestring,pass->valuestring);
     vTaskDelay(pdMS_TO_TICKS(2000));
-    esp_restart();
+    xEventGroupSetBits(_eventGroup,REBOOT_SUCCESS_BIT);
     return ESP_OK;
 }
 
+void APController::waitReboot(){
+    xEventGroupWaitBits(_eventGroup,REBOOT_SUCCESS_BIT,pdFALSE,pdTRUE,portMAX_DELAY);
+}

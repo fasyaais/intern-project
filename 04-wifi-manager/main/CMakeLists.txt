@@ -65,7 +65,7 @@ idf_component_register(
 
     EMBED_FILES
         "../frontend/dist/index.html"
-        "../frontend/dist/assets/index-CQOd6Co-.css"
-        "../frontend/dist/assets/index-19cTNh9z.js"
+        "../frontend/dist/assets/index-Bfr4IOl2.css"
+        "../frontend/dist/assets/index-v8LhRFuD.js"
 
 )

@@ -10,7 +10,6 @@ SystemManager::SystemManager():
         _apRouter(_apController),
         _httpService(_nvsConfig,_apRouter)
     {
-        
     }
 
 void SystemManager::start(){
@@ -26,10 +25,11 @@ void SystemManager::start(){
     auto ssid = _nvsConfig.read("ssid");
     auto pass = _nvsConfig.read("password");
     auto authmode = _nvsConfig.read("authmode");
-
+    
     _wifiService.begin();
     
     if(ssid.get() == nullptr){
+        xTaskCreate(_ledBlinkTask,"Led Blink Task",1024,this,3,&_blinkHandler);
         _wifiService.apInit();
         uint8_t ssid_len = strlen(WIFI_SSID);
         wifi_config_t wifi_config = {
@@ -48,6 +48,9 @@ void SystemManager::start(){
         ESP_ERROR_CHECK(esp_wifi_start());
         _httpService.start(8080);
         _apRouter.registerRouter(_httpService.getServer());
+        _apController.waitReboot();
+        vTaskDelete(_blinkHandler);
+        esp_restart();
     }else{
         ESP_LOGI("system manager","ssid: %s, pass: %s", ssid.get(), pass.get());
         ESP_ERROR_CHECK(_wifiService.staInit());
@@ -75,6 +78,7 @@ void SystemManager::start(){
         ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config) );
         ESP_ERROR_CHECK(esp_wifi_start() );
         _wifiService.waitConnected();
+        _wifiService.scanAP();
 
         _timeService.fetchTime();
 
@@ -82,10 +86,7 @@ void SystemManager::start(){
         nvs_update_timer_args.arg = (void*)&_timeService;
         nvs_update_timer_args.callback = [](void *args){
             auto* service = static_cast<TimeService*>(args);
-            for(;;) {
-                service->fetchTime();
-                vTaskDelay(pdMS_TO_TICKS(TIME_PERIOD)); // Update setiap periode tertentu
-            }
+            service->fetchTime();
         };
 
         // esp_timer_handle_t nvs_update_timer;
@@ -98,12 +99,22 @@ void SystemManager::start(){
         // _clientService.post(data);
         _clientService.get();
 
-        xTaskCreate(&_ledTask,"led task",4096,this,3,nullptr);        
+        xTaskCreate(&_ledTask,"led_task",3072,this,3,nullptr);
+        xTaskCreate([](void* args){
+            auto* self = static_cast<SystemManager*>(args);
+            self->_clientService.checkStatus();
+        },"check_status_task",3072,this,3,nullptr);
     }
 }
 
 void SystemManager::_ledTask(void* args){
     auto* self = static_cast<SystemManager*>(args);
     self->_ledService.init();
+    vTaskDelete(nullptr);
+}
+
+void SystemManager::_ledBlinkTask(void* args){
+    auto* self = static_cast<SystemManager*>(args);
+    self->_ledService.blink();
     vTaskDelete(nullptr);
 }

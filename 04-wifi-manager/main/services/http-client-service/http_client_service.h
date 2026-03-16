@@ -5,6 +5,7 @@
 #include "esp_log.h"
 #include "cJSON.h"
 #include "esp_crt_bundle.h"
+// #include "queue"
 
 #define PATH "192.168.1.51"
 // #define PATH "dogapi.dog"
@@ -16,18 +17,22 @@ private:
     static constexpr const char* _TAG = "http client service";
     char _outputBuffer[MAX_HTTP_OUTPUT_BUFFER + 1] = {0};
     int _contentLength;
+    // std::queue<char> _dataQueue;
+    QueueHandle_t _retryQueue;
 
     esp_http_client_config_t _config;
     esp_http_client_handle_t _client;
 
     // esp_err_t _eventHandler;
 public:
-    // HTTPClientService();
+    HTTPClientService();
     ~HTTPClientService();
 
     void begin(const char* url);
     cJSON* get();
     void post(cJSON* json);
+    void checkStatus();
+    // void sse();
 };
 
 #endif

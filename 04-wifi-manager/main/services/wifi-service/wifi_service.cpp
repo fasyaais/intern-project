@@ -9,12 +9,12 @@ WiFiService::~WiFiService(){
     ESP_LOGI(_TAG,"wifi service close");
 }
 
-void WiFiService::begin(){
-    ESP_ERROR_CHECK(esp_netif_init());
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
+esp_err_t WiFiService::begin(){
+    esp_netif_init();
+    esp_event_loop_create_default();
     
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+    return esp_wifi_init(&cfg);
 }
 
 void WiFiService::_eventHandlerSTA(void* arg, esp_event_base_t base, int32_t id, void* data){

@@ -23,6 +23,7 @@ public:
     // ~LedService();
 
     void init();
+    void blink();
 };
 
 #endif

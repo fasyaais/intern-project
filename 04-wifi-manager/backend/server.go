@@ -34,10 +34,15 @@ func main() {
 		})
 	})
 
+	e.HEAD("/health", func(c *echo.Context) error {
+		return c.String(http.StatusOK, "")
+	})
+
 	e.POST("/", func(c *echo.Context) error {
 		ls := new(models.LedStateDTO)
 
 		if err := c.Bind(ls); err != nil {
+			fmt.Println(ls)
 			return err
 		}
 		fmt.Println(ls)

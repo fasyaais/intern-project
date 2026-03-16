@@ -19,3 +19,12 @@ void LedService::init(){
         vTaskDelay(pdMS_TO_TICKS(200));
     }
 }
+
+void LedService::blink(){
+    for(;;){
+        if(_ledDriver.isON()) _ledDriver.turnOFF();
+        else _ledDriver.turnON();
+
+        vTaskDelay(pdMS_TO_TICKS(500));
+    }
+}

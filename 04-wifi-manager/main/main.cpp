@@ -28,8 +28,13 @@ extern "C" {
 // }
 
 void app_main(){
-    auto sm = std::make_unique<SystemManager>();
+    std::unique_ptr<SystemManager> sm = std::make_unique<SystemManager>();
     sm->start();
+    ESP_LOGI("MEM", "Size of SystemManager: %d bytes", sizeof(SystemManager));
+    // sm.release();
+    while (true)
+    {
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
     
-    ESP_LOGI("MEM", "Size of SystemManager: %d bytes", sizeof(sm));
 }

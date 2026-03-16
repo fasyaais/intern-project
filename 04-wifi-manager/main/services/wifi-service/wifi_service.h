@@ -34,7 +34,7 @@ public:
     esp_err_t apInit();
     esp_err_t staInit();
     std::vector<wifi_ap_record_t> scanAP();
-    void begin();
+    esp_err_t begin();
     void waitConnected();
 };
 

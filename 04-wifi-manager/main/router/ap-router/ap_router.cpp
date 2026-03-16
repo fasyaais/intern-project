@@ -47,8 +47,9 @@ void APRouter::registerRouter(httpd_handle_t server){
         &_controller,
         &APController::indexCSS
     };
+    
     static httpd_uri_t index_css_api = {
-        .uri = "/assets/index-CQOd6Co-.css",
+        .uri = "/assets/index-Bfr4IOl2.css",
         .method = HTTP_GET,
         .handler = routerWrapper,
         .user_ctx = &indexCSSCtx
@@ -60,7 +61,7 @@ void APRouter::registerRouter(httpd_handle_t server){
         &APController::appJS
     };
     static httpd_uri_t app_js_api = {
-        .uri = "/assets/index-19cTNh9z.js",
+        .uri = "/assets/index-v8LhRFuD.js",
         .method = HTTP_GET,
         .handler = routerWrapper,
         .user_ctx = &appJsCtx
