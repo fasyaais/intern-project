@@ -98,12 +98,18 @@ void SystemManager::start(){
         const char *data = "{\"field1\":\"value1\"}";
         // _clientService.post(data);
         _clientService.get();
-
         xTaskCreate(&_ledTask,"led_task",3072,this,3,nullptr);
         xTaskCreate([](void* args){
             auto* self = static_cast<SystemManager*>(args);
             self->_clientService.checkStatus();
         },"check_status_task",3072,this,3,nullptr);
+
+        this->_clientService.sse();
+        
+        // xTaskCreate([](void* args){
+        //     auto* self = static_cast<SystemManager*>(args);
+        //     self->_clientService.sse();
+        // },"sse_client_task",3072,this,3,nullptr);
     }
 }
 

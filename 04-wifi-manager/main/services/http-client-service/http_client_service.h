@@ -17,11 +17,16 @@ private:
     static constexpr const char* _TAG = "http client service";
     char _outputBuffer[MAX_HTTP_OUTPUT_BUFFER + 1] = {0};
     int _contentLength;
+
+    
     // std::queue<char> _dataQueue;
     QueueHandle_t _retryQueue;
 
     esp_http_client_config_t _config;
     esp_http_client_handle_t _client;
+
+    esp_http_client_config_t _sseConfig;
+    esp_http_client_handle_t _sseClient;
 
     // esp_err_t _eventHandler;
 public:
@@ -32,7 +37,7 @@ public:
     cJSON* get();
     void post(cJSON* json);
     void checkStatus();
-    // void sse();
+    void sse();
 };
 
 #endif
