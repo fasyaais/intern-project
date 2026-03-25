@@ -4,6 +4,7 @@ LedDriver::LedDriver(gpio_num_t pin):_pin(pin){
     _io_conf.pin_bit_mask = 1ULL << _pin;
     _io_conf.mode = GPIO_MODE_OUTPUT;
     gpio_config(&_io_conf);
+    _lastState = false;
 }
 
 void LedDriver::turnON(){
@@ -18,4 +19,8 @@ void LedDriver::turnOFF(){
 
 bool LedDriver::isON(){
     return _lastState;
+}
+
+gpio_num_t LedDriver::getPin(){
+    return _pin;
 }

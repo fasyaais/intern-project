@@ -9,6 +9,7 @@
 #include "time_service.h"
 #include "led_service.h"
 #include "http_client_service.h"
+#include "gpio_manager.h"
 
 #define WIFI_SSID "ESP TASK 2024"
 #define WIFI_PASS "password"
@@ -19,10 +20,14 @@
 class SystemManager
 {
 private:
+    std::vector<gpio_num_t> _leds;
+    std::vector<gpio_num_t> _buttons;
+
     NVSConfig _nvsConfig;
 
-    LedDriver _ledDriver;
-    ButtonDriver _buttonDriver;
+    // LedDriver _ledDriver;
+    // ButtonDriver _buttonDriver;
+    GPIOManager _gpioManager;
     WiFiService _wifiService;
     HTTPClientService _clientService;
     TimeService _timeService;
@@ -39,7 +44,7 @@ private:
     static void _ledTask(void* args);
     static void _ledBlinkTask(void* args);
 public:
-    SystemManager();
+    SystemManager(std::vector<gpio_num_t> leds, std::vector<gpio_num_t> buttons);
     void start();
 };
 

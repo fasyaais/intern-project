@@ -27,14 +27,14 @@ const password = ref('')
 const isSubmited = ref(false)
 
 onMounted(async () => {
-  const n = await fetch('http://192.168.4.1:8080/api/scan')
+  const n = await fetch('http://192.168.4.1/api/scan')
   data.value = await n.json()
   // data.value = networks
   // console.log(data.value)
 })
 
 const submit = async (ssid:string)=>{
-  await fetch("http://192.168.4.1:8080/api/connect", {
+  await fetch("http://192.168.4.1/api/connect", {
     method: "POST",
     // headers: {
     //   "content-type" : "application/json",
@@ -45,7 +45,7 @@ const submit = async (ssid:string)=>{
 }
 
 const refresh = async () => {
-  const n = await fetch('http://192.168.4.1:8080/api/scan')
+  const n = await fetch('http://192.168.4.1/api/scan')
   data.value = await n.json() 
   // console.log("refresh")
   console.info(data.value)

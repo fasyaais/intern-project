@@ -1,11 +1,15 @@
 #include "system_manager.h"
 
-SystemManager::SystemManager():
-        _ledDriver(GPIO_NUM_2),
-        _buttonDriver(GPIO_NUM_4),
+SystemManager::SystemManager(std::vector<gpio_num_t> leds, std::vector<gpio_num_t> buttons):
+        _leds(leds),
+        _buttons(buttons),
+        // _ledDriver(GPIO_NUM_2),
+        // _buttonDriver(GPIO_NUM_4),
+        _gpioManager(_leds,_buttons),
         _wifiService(_nvsConfig),
+        _clientService(_gpioManager),
         _timeService(_nvsConfig),
-        _ledService(_ledDriver,_buttonDriver,_timeService,_clientService),
+        _ledService(_timeService,_gpioManager,_clientService),
         _apController(_wifiService,_nvsConfig),
         _apRouter(_apController),
         _httpService(_nvsConfig,_apRouter)
@@ -46,7 +50,7 @@ void SystemManager::start(){
         ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
         ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &wifi_config));
         ESP_ERROR_CHECK(esp_wifi_start());
-        _httpService.start(8080);
+        _httpService.start(80);
         _apRouter.registerRouter(_httpService.getServer());
         _apController.waitReboot();
         vTaskDelete(_blinkHandler);
@@ -66,6 +70,7 @@ void SystemManager::start(){
 
         wifi_config.sta.sae_pwe_h2e = WPA3_SAE_PWE_HUNT_AND_PECK;
         wifi_config.sta.threshold.authmode = WIFI_AUTH_WPA2_PSK;
+        // wifi_config.sta.
         
         // if(authmode.get() == nullptr){
         //     wifi_config.sta.threshold.authmode = WIFI_AUTH_OPEN;
@@ -78,7 +83,7 @@ void SystemManager::start(){
         ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config) );
         ESP_ERROR_CHECK(esp_wifi_start() );
         _wifiService.waitConnected();
-        _wifiService.scanAP();
+        _httpService.start(80);
 
         _timeService.fetchTime();
 
@@ -97,15 +102,30 @@ void SystemManager::start(){
         _clientService.begin("http://"PATH":3000/");
         const char *data = "{\"field1\":\"value1\"}";
         // _clientService.post(data);
+        for (auto &led : _leds)
+        {
+            if(!_clientService.getGPIO(led)){
+                std::unique_ptr<cJSON,decltype(&cJSON_Delete)> json(cJSON_CreateObject(),cJSON_Delete);
+                cJSON_AddNumberToObject(json.get(),"pin",led);
+                cJSON_AddBoolToObject(json.get(),"state",false);
+                _clientService.createGPIO(json.get());
+            }
+        }
+
+
+        
         _clientService.get();
         xTaskCreate(&_ledTask,"led_task",3072,this,3,nullptr);
         xTaskCreate([](void* args){
             auto* self = static_cast<SystemManager*>(args);
             self->_clientService.checkStatus();
         },"check_status_task",3072,this,3,nullptr);
-
-        this->_clientService.sse();
         
+        xTaskCreate([](void* args){
+            auto* self = static_cast<SystemManager*>(args);
+            self->_clientService.checkState("http://"PATH":3000/");
+        },"check_gpio_status_task",8192,this,3,nullptr);
+
         // xTaskCreate([](void* args){
         //     auto* self = static_cast<SystemManager*>(args);
         //     self->_clientService.sse();

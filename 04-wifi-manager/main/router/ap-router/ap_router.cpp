@@ -61,7 +61,7 @@ void APRouter::registerRouter(httpd_handle_t server){
         &APController::appJS
     };
     static httpd_uri_t app_js_api = {
-        .uri = "/assets/index-v8LhRFuD.js",
+        .uri = "/assets/index-BFKvy6o_.js",
         .method = HTTP_GET,
         .handler = routerWrapper,
         .user_ctx = &appJsCtx

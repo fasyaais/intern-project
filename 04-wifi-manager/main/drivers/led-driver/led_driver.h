@@ -16,6 +16,7 @@ public:
     void turnON();
     void turnOFF();
     bool isON();
+    gpio_num_t getPin();
 };
 
 #endif

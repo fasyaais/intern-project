@@ -1,7 +1,10 @@
 package main
 
 import (
+	"backend/handler"
 	"backend/models"
+	"backend/repository"
+	"backend/services"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -20,6 +23,8 @@ func main() {
 	dsn := "admin:admin@tcp(127.0.0.1:3306)/rw_wifi_manager?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	db.AutoMigrate(&models.Wifi{})
+	db.AutoMigrate(&models.Gpio{})
+
 	// var clients sync.Map
 	client := make(chan string)
 	if err != nil {
@@ -31,6 +36,10 @@ func main() {
 	e := echo.New()
 	e.Use(middleware.RequestLogger())
 	e.Use(middleware.CORS("*"))
+
+	gpioRepo := repository.NewGPIORepository(db)
+	gpioService := services.NewGPIOService(gpioRepo)
+	gpioHandler := handler.NewGPIOHandler(gpioService)
 
 	e.GET("/", func(c *echo.Context) error {
 		// return c.String(http.StatusOK, "Hello world")
@@ -137,6 +146,12 @@ func main() {
 			}
 		}
 	})
+
+	e.POST("/api/gpio", gpioHandler.Create)
+
+	e.GET("/api/gpio", gpioHandler.Get)
+	e.GET("/api/gpio/:pin", gpioHandler.Find)
+	e.POST("/api/gpio/state", gpioHandler.UpdateState)
 
 	if err := e.Start("0.0.0.0:3000"); err != nil {
 		e.Logger.Error("failed to server", "error", err)

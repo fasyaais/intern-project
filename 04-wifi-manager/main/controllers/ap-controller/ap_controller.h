@@ -15,8 +15,8 @@ extern const uint8_t index_html_start[] asm("_binary_index_html_start");
 extern const uint8_t index_html_end[] asm("_binary_index_html_end");
 extern const uint8_t index_css_start[] asm("_binary_index_Bfr4IOl2_css_start");
 extern const uint8_t index_css_end[] asm("_binary_index_Bfr4IOl2_css_end");
-extern const uint8_t index_js_start[] asm("_binary_index_v8LhRFuD_js_start");
-extern const uint8_t index_js_end[] asm("_binary_index_v8LhRFuD_js_end");
+extern const uint8_t index_js_start[] asm("_binary_index_BFKvy6o__js_start");
+extern const uint8_t index_js_end[] asm("_binary_index_BFKvy6o__js_end");
 
 class APController
 {

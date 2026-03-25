@@ -3,6 +3,7 @@ set(sources
     "main.cpp"
     
     "cores/system-manager/system_manager.cpp"
+    "cores/gpio-manager/gpio_manager.cpp"
     
     "config/nvs-config/nvs_config.cpp"
 
@@ -28,6 +29,7 @@ set(include_dirs
     "."
     
     "cores/system-manager"
+    "cores/gpio-manager"
 
     "config/nvs-config"
 
@@ -66,6 +68,6 @@ idf_component_register(
     EMBED_FILES
         "../frontend/dist/index.html"
         "../frontend/dist/assets/index-Bfr4IOl2.css"
-        "../frontend/dist/assets/index-v8LhRFuD.js"
+        "../frontend/dist/assets/index-BFKvy6o_.js"
 
 )
