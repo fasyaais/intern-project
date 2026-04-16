@@ -3,29 +3,29 @@
 #include "driver/uart.h"
 #include "uart_service.h"
 #include "i2c_driver.h"
+#include "lcd_driver.h"
 #include "driver/gpio.h"
+#include "esp_log.h"
+
+#include "esp_lcd_panel_ops.h"
+#include "esp_lcd_io_spi.h"
+#include "esp_lcd_ili9488.h"
+#include "lcd.h"
+
+#include "pn532.h" 
+#include "pn532_driver_i2c.h"
 
 extern "C"
 {
     void app_main(void);
 }
 
-// QueueHandle_t uart_queue;
-// const int uart_buffer_size = (1024 * 2);
-// const uart_port_t uart_num = UART_NUM_0;
-
-// void uart_event_task(void *pvParameters){
-//     size_t buffered_size;
-//     if(xQueueReceive(uart_queue,&buffered_size,portMAX_DELAY)){
-        
-//     }
-// }
-
 
 void app_main(void)
 {
     static UartService uartServ(UART_NUM_0);
     
+    const int uart_buffer_size = (1024 * 2);
     uart_config_t uart_config = {};
     uart_config.baud_rate = 115200;
     uart_config.data_bits = UART_DATA_8_BITS;
@@ -34,37 +34,109 @@ void app_main(void)
     uart_config.flow_ctrl = UART_HW_FLOWCTRL_DISABLE;
     uart_config.rx_flow_ctrl_thresh = 122;
 
-    const int uart_buffer_size = (1024 * 2);
     ESP_ERROR_CHECK(uart_driver_install(uartServ.getUartNum(), uart_buffer_size, uart_buffer_size, 10, uartServ.getQueueHandle(), 0));
     ESP_ERROR_CHECK(uart_param_config(uartServ.getUartNum(), &uart_config));
     uart_set_pin(uartServ.getUartNum(), UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
 
-    i2c_master_bus_config_t i2c_mst_config = {};
-    i2c_mst_config.clk_source = I2C_CLK_SRC_DEFAULT;
-    i2c_mst_config.i2c_port = I2C_NUM_0;
-    i2c_mst_config.scl_io_num = GPIO_NUM_4;
-    i2c_mst_config.sda_io_num = GPIO_NUM_5;
-    i2c_mst_config.glitch_ignore_cnt = 7;
-    i2c_mst_config.flags.enable_internal_pullup = true;
-
-    i2c_master_bus_handle_t bus_handle;
-    ESP_ERROR_CHECK(i2c_new_master_bus(&i2c_mst_config, &bus_handle));
-
-    i2c_device_config_t dev_cfg = {};
-    dev_cfg.dev_addr_length = I2C_ADDR_BIT_LEN_7;
-    dev_cfg.device_address = 0x58;
-    dev_cfg.scl_speed_hz = 100000;
-
-    i2c_master_dev_handle_t dev_handle;
-    ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle, &dev_cfg, &dev_handle));
-
-    I2CDriver mpu(&bus_handle,&dev_handle);
+    // gpio_reset_pin(GPIO_NUM_21);
+    // gpio_reset_pin(GPIO_NUM_22);
     
+    // i2c_master_bus_config_t i2c_mst_config = {};
+    // i2c_mst_config.clk_source = I2C_CLK_SRC_DEFAULT;
+    // i2c_mst_config.i2c_port = I2C_NUM_0;
+    // i2c_mst_config.scl_io_num = GPIO_NUM_22;
+    // i2c_mst_config.sda_io_num = GPIO_NUM_21;
+    // // i2c_mst_config.glitch_ignore_cnt = 7;
+    // i2c_mst_config.flags.enable_internal_pullup = true;
+
+    // i2c_master_bus_handle_t bus_handle;
+    // ESP_ERROR_CHECK(i2c_new_master_bus(&i2c_mst_config, &bus_handle));
+
+    // for (size_t i = 0; i < 256; i++)
+    // {
+    //     if(i2c_master_probe(bus_handle, i, -1) == ESP_OK){
+    //         ESP_LOGI("i2c","found device addr %02X",i);
+    //     }
+    // }
+
+    // I2CDriver rfid(bus_handle,0x24);
+    // pn532_io_t pn532_io;
+    // esp_err_t err;
+    // ESP_LOGI("TAG", "init PN532 in I2C mode");
+    // ESP_ERROR_CHECK(pn532_new_driver_i2c(GPIO_NUM_21, GPIO_NUM_22, GPIO_NUM_NC, GPIO_NUM_NC, 0, &pn532_io));
+
+    // do {
+    //     err = pn532_init(&pn532_io);
+    //     if (err != ESP_OK) {
+    //         ESP_LOGW("TAG", "failed to initialize PN532");
+    //         pn532_release(&pn532_io);
+    //         vTaskDelay(1000 / portTICK_PERIOD_MS);
+    //     }
+    // } while(err != ESP_OK);
+
+    // while (true) {
+    //     uint8_t uid[7];
+    //     uint8_t uidLen;
+
+    //     if (pn532_read_passive_target_id(&pn532_io, 0x00, uid, &uidLen, 1000) == ESP_OK) {
+    //         ESP_LOGI("RFID", "Kartu Terdeteksi!");
+    //         ESP_LOG_BUFFER_HEX("UID", uid, uidLen);
+    //     } else {
+    //         // Tidak ada kartu dalam jangkauan
+    //         ESP_LOGD("RFID", "Menunggu kartu...");
+    //     }
+    //     vTaskDelay(pdMS_TO_TICKS(500));
+    // }
+
+    // // uint8_t reg = _addr;
+    // // uint8_t reg = 0x37;
+    // std::array<uint8_t, 255> rx_buffer = {0}; 
+    
+    // while (true)
+    // {
+    //     // esp_err_t ret = pn532_read_data(&pn532_io,rx_buffer.data(),rx_buffer.size(),100);
+    //     ESP_LOGI("RFID", "waiting...");
+    //     esp_err_t ret = pn532_read_data(&pn532_io,rx_buffer.data(),rx_buffer.size(),portMAX_DELAY);
+
+    //     if (ret == ESP_OK) {
+    //         ESP_LOGI("RFID", "Data: %02X %02X %02X", rx_buffer[0], rx_buffer[1], rx_buffer[2]);
+    //     } else {
+    //         ESP_LOGE("RFID", "Gagal baca: %s", esp_err_to_name(ret));
+    //     }
+    //     vTaskDelay(pdMS_TO_TICKS(1000));
+    // }
+    
+
+    spi_device_handle_t spi;
+    spi_bus_config_t buscfg = {};
+    buscfg.miso_io_num = GPIO_NUM_19;
+    buscfg.mosi_io_num = GPIO_NUM_23;
+    buscfg.sclk_io_num = GPIO_NUM_18;
+    buscfg.quadwp_io_num = GPIO_NUM_NC;
+    buscfg.quadhd_io_num = GPIO_NUM_NC;
+    // buscfg.max_transfer_sz = (16 * 320 * 2 + 8);
+
+    spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_CH_AUTO);
+
+    lcd_config_t lcd_config = {};
+    lcd_config.bus = SPI2_HOST;
+    lcd_config.cs_pin = GPIO_NUM_5;
+    lcd_config.dc_pin = GPIO_NUM_4;
+    lcd_config.rst_pin = GPIO_NUM_15;
+    lcd_config.frequency = 2*1000*1000;
+
+    // LcdDriver lcd(lcd_config);
+    // lcd.init();
+    // lcd.draw();
     xTaskCreate(UartService::start,"uart_write_task",4096,(void*)&uartServ,3,nullptr);
+    // xTaskCreate(I2CDriver::start,"rfid_task",4096,(void*)&rfid,3,nullptr);
 
     // printf("hello world\n");
     // CircularBufferService<uint8_t> circBuff(20);
     // circBuff.put(20);
     // auto val = circBuff.get();
     // printf("%d\n", *val);
+    while (1) {
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
 }

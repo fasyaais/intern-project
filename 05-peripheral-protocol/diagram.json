@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "author": "Anonymous maker",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 81.64, "attrs": {} },
+    { "type": "wokwi-mpu6050", "id": "imu1", "top": 119.02, "left": -55.28, "attrs": {} },
+    { "type": "wokwi-ili9341", "id": "lcd1", "top": -200.8, "left": 278.1, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "imu1:VCC", "esp:5V", "red", [ "v0", "h38.48", "v76.8" ] ],
+    [ "imu1:GND", "esp:GND.1", "black", [ "v0" ] ],
+    [ "imu1:SCL", "esp:22", "green", [ "v0" ] ],
+    [ "imu1:SDA", "esp:21", "green", [ "v0" ] ],
+    [ "lcd1:GND", "esp:GND.1", "black", [ "v9.6", "h-307.2" ] ],
+    [ "lcd1:CS", "esp:5", "green", [ "v0" ] ],
+    [ "lcd1:MOSI", "esp:23", "green", [ "v0" ] ],
+    [ "lcd1:SCK", "esp:18", "green", [ "v0" ] ],
+    [ "lcd1:MISO", "esp:19", "green", [ "v0" ] ],
+    [ "lcd1:VCC", "esp:3V3", "red", [ "v0" ] ],
+    [ "lcd1:LED", "esp:5V", "green", [ "v144", "h-307.21" ] ],
+    [ "lcd1:D/C", "esp:4", "green", [ "v0" ] ],
+    [ "lcd1:RST", "esp:15", "green", [ "v0" ] ]
+  ],
+  "dependencies": {}
+}
