@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "system_manager.h" 
+#include "esp_mac.h"
 
 extern "C" {
     void app_main();
@@ -16,6 +17,9 @@ void app_main(){
     std::unique_ptr<SystemManager> sm = std::make_unique<SystemManager>(gp_output,gp_input);
     sm->start();
     ESP_LOGI("MEM", "Size of SystemManager: %d bytes", sizeof(SystemManager));
+    uint8_t mac[6];
+    esp_base_mac_addr_get(mac);
+    ESP_LOGI("ESP MODULE","mac "MACSTR,MAC2STR(mac));
     // sm.release();
     while (true)
     {

@@ -9,7 +9,7 @@ HTTPService::~HTTPService(){
 }
 
 esp_err_t HTTPService::start(){
-    _config.server_port = 8000;
+    _config.server_port = 80;
     _config.lru_purge_enable = true;
 
     if(_server != nullptr){
@@ -17,7 +17,7 @@ esp_err_t HTTPService::start(){
     }
     esp_err_t err = httpd_start(&_server,&_config);
     if(err == ESP_OK){
-        ESP_LOGI(_TAG, "HTTP server started on port %d", 8000);
+        ESP_LOGI(_TAG, "HTTP server started on port %d", 80);
     }else{
         ESP_LOGE(_TAG, "Failed to start HTTP server");
     }
@@ -39,6 +39,27 @@ esp_err_t HTTPService::start(uint16_t port){
     esp_err_t err = httpd_start(&_server,&_config);
     if(err == ESP_OK){
         ESP_LOGI(_TAG, "HTTP server started on port %d", port);
+    }else{
+        ESP_LOGE(_TAG, "Failed to start HTTP server");
+    }
+    return err;
+}
+
+esp_err_t HTTPService::startStation(){
+    _config.server_port = 80;
+    _config.lru_purge_enable = true;
+
+    if(_server != nullptr){
+        ESP_LOGW(_TAG,"Server already started");
+    }
+
+    esp_event_handler_instance_register(WIFI_EVENT, WIFI_EVENT_STA_DISCONNECTED,&_eventHandlerStation,this,&_server);
+
+    esp_event_handler_instance_register(IP_EVENT, IP_EVENT_STA_GOT_IP,&_eventHandlerStation,this,&_server);
+
+    esp_err_t err = httpd_start(&_server,&_config);
+    if(err == ESP_OK){
+        ESP_LOGI(_TAG, "HTTP server started on port %d", 80);
     }else{
         ESP_LOGE(_TAG, "Failed to start HTTP server");
     }
@@ -83,6 +104,29 @@ void HTTPService::_eventHandler(void* arg, esp_event_base_t base, int32_t id, vo
             }
         }
     }
+}
+
+void HTTPService::_eventHandlerStation(void* arg, esp_event_base_t base, int32_t id, void* data){
+    auto ctx = reinterpret_cast<HTTPService*>(arg);
+    if(base == WIFI_EVENT){
+        if(ctx->_server){
+            ESP_LOGI(_TAG,"Stop webserver");
+            if(httpd_stop(ctx->_server) == ESP_OK){
+                ctx->_server = nullptr;
+            }else{
+                ESP_LOGE(_TAG,"Failed to stop webserver");
+            }
+        }
+    } else if(base == IP_EVENT && id == IP_EVENT_STA_GOT_IP){
+        if(ctx->_server == nullptr){
+            ESP_LOGI(_TAG,"Starting webserver");
+            if(httpd_start(&ctx->_server,&ctx->_config) == ESP_OK){
+                ctx->_apRouter.registerRouterStation(ctx->_server);
+                // ctx->_apRouter
+            }
+        }
+    }
+
 }
 
 httpd_handle_t HTTPService::getServer(){

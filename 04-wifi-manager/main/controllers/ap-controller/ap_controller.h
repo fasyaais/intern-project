@@ -8,6 +8,10 @@
 #include "nvs_config.h"
 // #include "app_context.h"
 #include "router_context.h"
+#include "gpio_manager.h"
+#include <string>
+#include "storage_service.h"
+#include "time_service.h"
 
 #define REBOOT_SUCCESS_BIT BIT0
 
@@ -18,19 +22,30 @@ extern const uint8_t index_css_end[] asm("_binary_index_Bfr4IOl2_css_end");
 extern const uint8_t index_js_start[] asm("_binary_index_BFKvy6o__js_start");
 extern const uint8_t index_js_end[] asm("_binary_index_BFKvy6o__js_end");
 
+extern const uint8_t app_html_start[] asm("_binary_app_html_start");
+extern const uint8_t app_html_end[] asm("_binary_app_html_end");
+extern const uint8_t app_css_start[] asm("_binary_index_BXeNCRoy_css_start");
+extern const uint8_t app_css_end[] asm("_binary_index_BXeNCRoy_css_end");
+extern const uint8_t app_js_start[] asm("_binary_index_DalG0i6k_js_start");
+extern const uint8_t app_js_end[] asm("_binary_index_DalG0i6k_js_end");
+
 class APController
 {
 private:
     WiFiService& _wifiService;
     NVSConfig& _nvsConfig;
+    GPIOManager& _gpioMan;
+    StorageService& _storageService;
+    TimeService& _time;
 
     void _cors(httpd_req_t* req);
     static constexpr const char* _TAG = "ap contoller";
 
     EventGroupHandle_t _eventGroup;
+    esp_event_loop_handle_t _event_handle;
 
 public:
-    APController(WiFiService& WiFiService,NVSConfig& nvsConfig);
+    APController(WiFiService& WiFiService,NVSConfig& nvsConfig,GPIOManager& gpioMan,StorageService& storage,TimeService& time);
     ~APController();
 
     esp_err_t apiScanAP(httpd_req_t* req);
@@ -38,6 +53,14 @@ public:
     esp_err_t indexHTML(httpd_req_t* req);
     esp_err_t appJS(httpd_req_t* req);
     esp_err_t connectAP(httpd_req_t* req);
+
+    esp_err_t appUICSS(httpd_req_t* req);
+    esp_err_t appUIHTML(httpd_req_t* req);
+    esp_err_t appUIJS(httpd_req_t* req);
+    esp_err_t apiScanGPIO(httpd_req_t* req);
+    esp_err_t updateGPIO(httpd_req_t* req);
+    esp_err_t createGPIO(httpd_req_t* req);
+    esp_err_t deleteGPIO(httpd_req_t* req);
 
     void waitReboot();
 

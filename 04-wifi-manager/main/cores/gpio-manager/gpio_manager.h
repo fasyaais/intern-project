@@ -7,6 +7,8 @@
 #include <memory>
 #include <vector>
 #include <esp_log.h>
+#include "nvs_config.h"
+#include "cJSON.h"
 
 class GPIOManager
 {
@@ -15,8 +17,9 @@ private:
 
     std::map<gpio_num_t,std::unique_ptr<LedDriver>>     _leds;
     std::map<gpio_num_t,std::unique_ptr<ButtonDriver>>  _buttons;
+    NVSConfig& _nvs;
 public:
-    GPIOManager(std::vector<gpio_num_t> leds,std::vector<gpio_num_t> buttons);
+    GPIOManager(std::vector<gpio_num_t> leds,std::vector<gpio_num_t> buttons,NVSConfig& nvs);
     ~GPIOManager();
 
     bool hasLed(gpio_num_t pin);
@@ -24,6 +27,9 @@ public:
 
     ButtonDriver *getButton(gpio_num_t pin);
     LedDriver *getLed(gpio_num_t pin);
+    void lastState();
+    // std::map<gpio_num_t,std::unique_ptr<LedDriver>>     getLedList();
+    // std::map<gpio_num_t,std::unique_ptr<ButtonDriver>>  getButtonList();
 };
 
 #endif

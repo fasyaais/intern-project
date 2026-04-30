@@ -8,6 +8,8 @@
 #include "cJSON.h"
 #include "memory"
 #include "gpio_manager.h"
+#include "gpio.h"
+#include "storage_service.h"
 
 class LedService
 {
@@ -22,9 +24,10 @@ private:
 
     ButtonDriver* _button = _gpioManager.getButton(GPIO_NUM_4);
     LedDriver* _led = _gpioManager.getLed(GPIO_NUM_26);
+    StorageService& _storageService;
     // Response _response;
 public:
-    LedService(TimeService& timeService,GPIOManager& gpioManager,HTTPClientService& httpClientService);
+    LedService(TimeService& timeService,GPIOManager& gpioManager,HTTPClientService& httpClientService,StorageService& storage);
     // LedService(LedDriver& ledDriver,ButtonDriver& buttonDriver,TimeService& timeService,HTTPClientService& httpClientService);
     // ~LedService();
 

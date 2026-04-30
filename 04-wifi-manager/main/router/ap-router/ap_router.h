@@ -15,6 +15,7 @@ public:
     APRouter(APController& controller);
     ~APRouter();
     void registerRouter(httpd_handle_t server);
+    void registerRouterStation(httpd_handle_t server);
 };
 
 #endif

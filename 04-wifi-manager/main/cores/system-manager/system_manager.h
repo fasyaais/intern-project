@@ -10,6 +10,7 @@
 #include "led_service.h"
 #include "http_client_service.h"
 #include "gpio_manager.h"
+#include "storage_service.h"
 
 #define WIFI_SSID "ESP TASK 2024"
 #define WIFI_PASS "password"
@@ -31,6 +32,7 @@ private:
     WiFiService _wifiService;
     HTTPClientService _clientService;
     TimeService _timeService;
+    StorageService _storageService;
     LedService _ledService;
     
     APController _apController;

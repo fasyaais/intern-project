@@ -17,6 +17,7 @@ private:
     APRouter& _apRouter;
     
     static void _eventHandler(void* arg, esp_event_base_t base, int32_t id, void* data);
+    static void _eventHandlerStation(void* arg, esp_event_base_t base, int32_t id, void* data);
 public:
     HTTPService(NVSConfig& nvsConfig,APRouter& apRouter);
     ~HTTPService();
@@ -24,6 +25,7 @@ public:
     esp_err_t start();
     esp_err_t start(uint16_t port);
     esp_err_t stop();
+    esp_err_t startStation();
     
     // esp_err_t registerURI(httpd_uri_t* uri);
     httpd_handle_t getServer();

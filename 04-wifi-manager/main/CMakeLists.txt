@@ -15,6 +15,7 @@ set(sources
     "services/http-client-service/http_client_service.cpp"
     "services/time-service/time_service.cpp"
     "services/led-service/led_service.cpp"
+    "services/storage-service/storage_service.cpp"
     
     "controllers/ap-controller/ap_controller.cpp"
 
@@ -41,6 +42,7 @@ set(include_dirs
     "services/http-client-service"
     "services/time-service"
     "services/led-service"
+    "services/storage-service"
 
     "models"
     
@@ -63,11 +65,14 @@ idf_component_register(
         esp_http_client 
         mbedtls 
         esp_timer
-        driver
+        esp_driver_gpio
 
     EMBED_FILES
         "../frontend/dist/index.html"
         "../frontend/dist/assets/index-Bfr4IOl2.css"
         "../frontend/dist/assets/index-BFKvy6o_.js"
 
+        "../app-frontend/dist/app.html"
+        "../app-frontend/dist/assets/index-BXeNCRoy.css"
+        "../app-frontend/dist/assets/index-DalG0i6k.js"
 )
