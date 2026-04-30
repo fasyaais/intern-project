@@ -2,9 +2,11 @@ set(sources
     "main.cpp"
     # "services/circular-buffer-service/circular_buffer_service.cpp"
     "services/uart-service/uart_service.cpp"
+    "services/mpu-service/mpu_service.cpp"
 
-    "drivers/i2c-driver/i2c_driver.cpp"
+    "drivers/rfid-driver/rfid_driver.cpp"
     "drivers/lcd-driver/lcd_driver.cpp"
+    "drivers/mpu-driver/mpu_driver.cpp"
 
 )
 
@@ -14,9 +16,11 @@ set(incl_dirs
 
     "services/circular-buffer-service"
     "services/uart-service"
+    "services/mpu-service"
 
-    "drivers/i2c-driver"
+    "drivers/rfid-driver"
     "drivers/lcd-driver"
+    "drivers/mpu-driver"
 
     
 )

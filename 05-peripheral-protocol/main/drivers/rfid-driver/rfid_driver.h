@@ -2,24 +2,22 @@
 #define I2C_DRIVER_H
 
 #include "driver/i2c_master.h"
-#include "array"
 #include "esp_log.h"
-#include "freertos/FreeRTOS.h"
+#include "pn532.h"
 
-class I2CDriver
+class RFIDDriver
 {
 private:
     const char* _TAG = "mpu_driver";
 
-    i2c_master_bus_handle_t _bus_handle;
+    pn532_io_t& _handle;
     i2c_master_dev_handle_t _dev_handle;
     uint16_t _addr;
 public:
-    I2CDriver(i2c_master_bus_handle_t bus_handle,uint16_t addr);
-    ~I2CDriver();
+    RFIDDriver(pn532_io_t& handle);
 
-    void read();
-    void write();
+    esp_err_t init();
+    // void read();
     static void start(void *args);
 };
 

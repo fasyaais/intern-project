@@ -27,8 +27,6 @@ void UartService::start(void *args)
             {
                 int len = uart_read_bytes(self->_uart_num,&data,event.size,portMAX_DELAY);
 
-                // if(state == PACKET_DATA) state = PACKET_LENGTH;
-                
                 for (size_t i = 0; i < len; i++)
                 {
                     switch (state)
@@ -54,12 +52,12 @@ void UartService::start(void *args)
                         data_string.push_back(data[i]);
                         sum ^= data[i];
                         count++;
-                        ESP_LOGW("response","i = %d",i);
+                        // ESP_LOGW("response","i = %d",i);
                         if(count >= data_length) state = PACKET_CHECKSUM;
                         break;
                     case PACKET_CHECKSUM:
                         if(sum == data[i]){
-                            ESP_LOGW("response","Valid checksum");
+                            // ESP_LOGW("response","Valid checksum");
                             state = PACKET_TAIL;
                         }else {
                             state = PACKET_HEAD;

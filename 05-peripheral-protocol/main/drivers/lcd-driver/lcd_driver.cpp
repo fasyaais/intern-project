@@ -54,7 +54,7 @@ esp_err_t LcdDriver::init()
 
 void LcdDriver::draw()
 {
-    uint16_t *canvas = (uint16_t*)heap_caps_calloc(1,LCD_W_RES * CHUNK * sizeof(uint16_t),MALLOC_CAP_DMA);
+    uint16_t *canvas = (uint16_t*)heap_caps_calloc(1, LCD_W_RES * CHUNK * sizeof(uint16_t),MALLOC_CAP_DMA);
 
     for (size_t i = 0; i < LCD_W_RES * CHUNK; i++)
     {
